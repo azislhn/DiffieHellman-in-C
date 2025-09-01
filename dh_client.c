@@ -39,19 +39,31 @@ int main() {
     // Mengatur alamat server
     server_addr.sin_family = AF_INET;
     server_addr.sin_addr.s_addr = inet_addr("127.0.0.1"); // Hubungkan ke localhost
-    server_addr.sin_port = htons(8888);
 
-    // Menghubungkan ke server
-    if (connect(client_socket, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
-        perror("Koneksi gagal");
+    int port = 8888;
+    int max_port = 9000;
+    int connect_result;
+
+    // Coba konek dari port 8888 sampai max_port
+    do {
+        server_addr.sin_port = htons(port);
+        connect_result = connect(client_socket, (struct sockaddr *)&server_addr, sizeof(server_addr));
+        if (connect_result < 0) {
+            port++;
+        }
+    } while (connect_result < 0 && port <= max_port);
+
+    if (connect_result < 0) {
+        fprintf(stderr, "Tidak bisa terhubung ke server di port %d\n", max_port);
         close(client_socket);
         exit(EXIT_FAILURE);
     }
-    printf("Terhubung ke server.\n\n");
+
+    printf("Terhubung ke server di port %d\n\n", port);
 
     // 1. Menghasilkan kunci privat acak untuk klien (b)
     srand(time(NULL) + 1); // Tambahkan 1 untuk seed yang berbeda dari server
-    long long private_key_client = rand() % (p - 1) + 1; // b
+    long long private_key_client = rand() % (p - 2) + 1; // b
     printf("Kunci Privat Klien (b): %lld\n", private_key_client);
 
     // 2. Menghitung kunci publik klien (B)

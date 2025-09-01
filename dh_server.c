@@ -40,14 +40,28 @@ int main() {
     // Mengatur alamat server
     server_addr.sin_family = AF_INET;
     server_addr.sin_addr.s_addr = INADDR_ANY;
-    server_addr.sin_port = htons(8888);
 
-    // Bind socket ke alamat
-    if (bind(server_socket, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
-        perror("Bind gagal");
+    int port = 8888;
+    int max_port = 9000; // batas atas biar nggak infinite loop
+    int bind_result;
+
+    // Coba bind dari port 8888 sampai max_port
+    do {
+        server_addr.sin_port = htons(port);
+        bind_result = bind(server_socket, (struct sockaddr *)&server_addr, sizeof(server_addr));
+        if (bind_result < 0) {
+            // perror("Bind gagal, mencoba port lain");
+            port++;
+        }
+    } while (bind_result < 0 && port <= max_port);
+
+    if (bind_result < 0) {
+        fprintf(stderr, "Tidak bisa bind ke port manapun!\n");
         close(server_socket);
         exit(EXIT_FAILURE);
     }
+
+    printf("Server berjalan di port %d\n", port);
 
     // Mendengarkan koneksi masuk
     listen(server_socket, 3);
@@ -64,7 +78,7 @@ int main() {
 
     // 1. Menghasilkan kunci privat acak untuk server (a)
     srand(time(NULL));
-    long long private_key_server = rand() % (p - 1) + 1; // a
+    long long private_key_server = rand() % (p - 2) + 1; // a
     printf("Kunci Privat Server (a): %lld\n", private_key_server);
 
     // 2. Menghitung kunci publik server (A)
