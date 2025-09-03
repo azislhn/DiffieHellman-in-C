@@ -1,4 +1,4 @@
-# Implementasi Sederhana: Protokol Pertukaran Kunci Diffie-Hellman dalam C
+# Implementasi Sederhana: Protokol Pertukaran Kunci Diffie-Hellman dengan Socket Programming dalam Bahasa C
 
 Proyek ini mendemonstrasikan implementasi dasar dari **protokol pertukaran kunci Diffie-Hellman** menggunakan soket TCP/IP dalam bahasa C. Tujuannya adalah untuk menunjukkan bagaimana dua pihak (klien dan server) dapat secara aman membuat kunci rahasia bersama melalui saluran komunikasi yang tidak aman.
 
